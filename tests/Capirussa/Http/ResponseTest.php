@@ -82,7 +82,7 @@ class ResponseTest extends PHPUnit_Framework_TestCase
             'HTTP/1.1 200 OK' . "\r\n" .
             'Connection: Close' . "\r\n" .
             "\0" . "\r\n" . // invalid because empty (true blank lines (\r\n\r\n) indicate boundary between headers and body)
-            'Content-Type: text/html' . "\r\n" .
+            'Content-type: text/html; charset=utf-8' . "\r\n" .
             'Content-Length 4096' // invalid because the semicolon is missing
         );
 
@@ -93,9 +93,9 @@ class ResponseTest extends PHPUnit_Framework_TestCase
         $this->assertInternalType('array', $response->getRawHeaders());
         $this->assertCount(2, $response->getRawHeaders());
         $this->assertArrayHasKey('Connection', $response->getRawHeaders());
-        $this->assertArrayHasKey('Content-Type', $response->getRawHeaders());
+        $this->assertArrayHasKey('Content-type', $response->getRawHeaders());
         $this->assertEquals('Close', $this->getObjectAttribute((object)$response->getRawHeaders(), 'Connection'));
-        $this->assertEquals('text/html', $this->getObjectAttribute((object)$response->getRawHeaders(), 'Content-Type'));
+        $this->assertEquals('text/html; charset=utf-8', $this->getObjectAttribute((object)$response->getRawHeaders(), 'Content-type'));
 
         $this->assertNotNull($response->getRawBody());
         $this->assertInternalType('string', $response->getRawBody());
@@ -108,7 +108,7 @@ class ResponseTest extends PHPUnit_Framework_TestCase
             'HTTP/1.1 100 Continue' . "\r\n" .
             "\r\n" .
             'HTTP/1.1 200 OK' . "\r\n" .
-            'Connection: Close' . "\r\n" .
+            'Content-Type: text/html' . "\r\n" .
             "\r\n" .
             'This should be the body'
         );
@@ -119,8 +119,8 @@ class ResponseTest extends PHPUnit_Framework_TestCase
         $this->assertNotNull($response->getRawHeaders());
         $this->assertInternalType('array', $response->getRawHeaders());
         $this->assertCount(1, $response->getRawHeaders());
-        $this->assertArrayHasKey('Connection', $response->getRawHeaders());
-        $this->assertEquals('Close', $this->getObjectAttribute((object)$response->getRawHeaders(), 'Connection'));
+        $this->assertArrayHasKey('Content-Type', $response->getRawHeaders());
+        $this->assertEquals('text/html', $this->getObjectAttribute((object)$response->getRawHeaders(), 'Content-Type'));
 
         $this->assertNotNull($response->getRawBody());
         $this->assertInternalType('string', $response->getRawBody());
