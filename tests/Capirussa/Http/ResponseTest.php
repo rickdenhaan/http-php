@@ -152,4 +152,59 @@ class ResponseTest extends PHPUnit_Framework_TestCase
         $this->assertInternalType('string', $response->getRawBody());
         $this->assertEquals('<!DOCTYPE html><html><head>Test</head><body>Test Body</body></html>', $response->getRawBody());
     }
+
+    public function testParseBodyWithHtmlBody()
+    {
+        $request = new \Capirussa\Http\Request('http://www.example.com');
+        $response = $request->send();
+
+        $this->assertNotNull($response->getParsedBody());
+        $this->assertInstanceOf('DOMDocument', $response->getParsedBody());
+
+        $domDocument = $response->getParsedBody();
+        /* @type $domDocument \DOMDocument */
+
+        $this->assertEquals('html', $domDocument->doctype->name);
+
+        $htmlDocument = $domDocument->getElementsByTagName('html');
+        $this->assertEquals(1, $htmlDocument->length);
+
+        $htmlHead = $htmlDocument->item(0)->getElementsByTagName('head');
+        $this->assertEquals(1, $htmlHead->length);
+
+        $headTitle = $htmlHead->item(0)->getElementsByTagName('title');
+        $this->assertEquals(1, $headTitle->length);
+        $this->assertEquals('Example Domain', $headTitle->item(0)->textContent);
+
+        $headMeta = $htmlHead->item(0)->getElementsByTagName('meta');
+        $this->assertEquals(3, $headMeta->length);
+        $this->assertEquals('utf-8', $headMeta->item(0)->getAttribute('charset'));
+        $this->assertEquals('Content-type', $headMeta->item(1)->getAttribute('http-equiv'));
+        $this->assertEquals('text/html; charset=utf-8', $headMeta->item(1)->getAttribute('content'));
+        $this->assertEquals('viewport', $headMeta->item(2)->getAttribute('name'));
+        $this->assertEquals('width=device-width, initial-scale=1', $headMeta->item(2)->getAttribute('content'));
+
+        $headStyle = $htmlHead->item(0)->getElementsByTagName('style');
+        $this->assertEquals(1, $headStyle->length);
+        $this->assertEquals(651, strlen($headStyle->item(0)->textContent));
+
+        $htmlBody = $htmlDocument->item(0)->getElementsByTagName('body');
+        $this->assertEquals(1, $htmlBody->length);
+
+        $bodyDiv = $htmlBody->item(0)->getElementsByTagName('div');
+        $this->assertEquals(1, $bodyDiv->length);
+
+        $bodyH1 = $bodyDiv->item(0)->getElementsByTagName('h1');
+        $this->assertEquals(1, $bodyH1->length);
+        $this->assertEquals('Example Domain', $bodyH1->item(0)->textContent);
+
+        $bodyP = $bodyDiv->item(0)->getElementsByTagName('p');
+        $this->assertEquals(2, $bodyP->length);
+        $this->assertEquals('This domain is established to be used for illustrative examples in documents. You may use this' . "\n    " . 'domain in examples without prior coordination or asking for permission.', $bodyP->item(0)->textContent);
+
+        $bodyA = $bodyP->item(1)->getElementsByTagName('a');
+        $this->assertEquals(1, $bodyA->length);
+        $this->assertEquals('More information...', $bodyA->item(0)->textContent);
+        $this->assertEquals('http://www.iana.org/domains/example', $bodyA->item(0)->getAttribute('href'));
+    }
 }
