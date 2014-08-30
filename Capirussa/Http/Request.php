@@ -383,10 +383,6 @@ class Request
         // close the CURL request
         curl_close($curl);
 
-        echo "\n\n\n\n";
-        echo $result;
-        echo "\n\n\n\n";
-
         // parse the response body and return the Response object
         $this->response = new Response($result);
 
