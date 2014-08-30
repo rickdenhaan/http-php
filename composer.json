@@ -1,0 +1,23 @@
+{
+    "name": "capirussa/http-php",
+    "type": "library",
+    "description": "A PHP library for communicating with external services over HTTP.",
+    "keywords": ["php", "http", "request", "library", "curl"],
+    "homepage": "http://github.com/rickdenhaan/http-php",
+    "authors": [
+        {
+            "name": "Rick den Haan",
+            "email": "rick@capirussa.nl",
+            "homepage": "http://capirussa.nl",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": ">=5.2.0"
+    },
+    "autoload": {
+        "psr-4" : {
+            "Capirussa\\Http\\" : "Capirussa/Http/"
+        }
+    }
+}
