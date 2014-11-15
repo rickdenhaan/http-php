@@ -350,7 +350,8 @@ class Request
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_FOLLOWLOCATION => true,
             CURLOPT_CONNECTTIMEOUT => $this->timeout,
-            CURLOPT_USERAGENT      => 'Capirussa/1.0 (+http://github.com/rickdenhaan/http-php)'
+            CURLOPT_TIMEOUT        => $this->timeout,
+            CURLOPT_USERAGENT      => 'Capirussa/1.0.1 (+http://github.com/rickdenhaan/http-php)'
         );
 
         // if this is a post request, tell CURL that
