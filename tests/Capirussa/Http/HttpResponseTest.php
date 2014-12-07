@@ -7,7 +7,7 @@ use Capirussa\Http\Response;
  * Tests Capirussa\Http\Response
  *
  */
-class ResponseTest extends PHPUnit_Framework_TestCase
+class HttpResponseTest extends PHPUnit_Framework_TestCase
 {
     /**
      * @expectedException PHPUnit_Framework_Error
@@ -155,7 +155,7 @@ class ResponseTest extends PHPUnit_Framework_TestCase
 
     public function testParseBodyWithHtmlBody()
     {
-        $request = new \Capirussa\Http\Request('http://www.example.com');
+        $request = new MockHttpRequest('http://www.example.com');
         $response = $request->send();
 
         $this->assertNotNull($response->getParsedBody());
@@ -186,7 +186,7 @@ class ResponseTest extends PHPUnit_Framework_TestCase
 
         $headStyle = $htmlHead->item(0)->getElementsByTagName('style');
         $this->assertEquals(1, $headStyle->length);
-        $this->assertEquals(651, strlen($headStyle->item(0)->textContent));
+        $this->assertEquals(681, strlen($headStyle->item(0)->textContent));
 
         $htmlBody = $htmlDocument->item(0)->getElementsByTagName('body');
         $this->assertEquals(1, $htmlBody->length);
@@ -200,11 +200,45 @@ class ResponseTest extends PHPUnit_Framework_TestCase
 
         $bodyP = $bodyDiv->item(0)->getElementsByTagName('p');
         $this->assertEquals(2, $bodyP->length);
-        $this->assertEquals('This domain is established to be used for illustrative examples in documents. You may use this' . "\n    " . 'domain in examples without prior coordination or asking for permission.', $bodyP->item(0)->textContent);
+        $this->assertEquals('This domain is established to be used for illustrative examples in documents. You may use this' . "\r\n    " . 'domain in examples without prior coordination or asking for permission.', $bodyP->item(0)->textContent);
 
         $bodyA = $bodyP->item(1)->getElementsByTagName('a');
         $this->assertEquals(1, $bodyA->length);
         $this->assertEquals('More information...', $bodyA->item(0)->textContent);
         $this->assertEquals('http://www.iana.org/domains/example', $bodyA->item(0)->getAttribute('href'));
+    }
+
+    public function testParseBodyWithLowercaseContentType()
+    {
+        $request = new MockHttpRequest('http://www.example.com/lowercase/content-type');
+        $response = $request->send();
+
+        $this->assertNotNull($response->getParsedBody());
+        $this->assertInstanceOf('DOMDocument', $response->getParsedBody());
+    }
+
+    public function testParseBodyWithCharacterSet()
+    {
+        $request = new MockHttpRequest('http://www.example.com/with/character-set');
+        $response = $request->send();
+
+        $this->assertNotNull($response->getParsedBody());
+        $this->assertInstanceOf('DOMDocument', $response->getParsedBody());
+    }
+
+    public function testParseBodyHtmlWithoutBody()
+    {
+        $request = new MockHttpRequest('http://www.example.com/with/empty-html');
+        $response = $request->send();
+
+        $this->assertNull($response->getParsedBody());
+    }
+
+    public function testParseBodyWithoutContentType()
+    {
+        $request = new MockHttpRequest('http://www.example.com/without/content-type');
+        $response = $request->send();
+
+        $this->assertNull($response->getParsedBody());
     }
 }

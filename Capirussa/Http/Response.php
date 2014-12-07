@@ -198,9 +198,7 @@ class Response
                 libxml_use_internal_errors(true);
 
                 $this->parsedBody = new \DOMDocument();
-                if (!$this->parsedBody->loadHTML($this->getRawBody())) {
-                    $this->parsedBody = null;
-                }
+                $this->parsedBody->loadHTML($this->getRawBody());
 
                 break;
         }

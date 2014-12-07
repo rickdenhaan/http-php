@@ -3,7 +3,7 @@ require_once(dirname(__FILE__) . '/../../../init.php');
 
 use Capirussa\Http;
 
-class MockRequest extends Http\Request
+class MockHttpRequest extends Http\Request
 {
     /**
      * Overrides the real request method to simulate a predefined response
@@ -17,6 +17,22 @@ class MockRequest extends Http\Request
 
         // read the mock file contents
         switch ($requestUrl) {
+            case 'http://www.example.com/lowercase/content-type':
+                $simulatedResponse = $this->loadMockResponse('mock_example_com_lcct.txt');
+                break;
+
+            case 'http://www.example.com/with/character-set':
+                $simulatedResponse = $this->loadMockResponse('mock_example_com_wcs.txt');
+                break;
+
+            case 'http://www.example.com/with/empty-html':
+                $simulatedResponse = $this->loadMockResponse('mock_example_com_weh.txt');
+                break;
+
+            case 'http://www.example.com/without/content-type':
+                $simulatedResponse = $this->loadMockResponse('mock_example_com_nct.txt');
+                break;
+
             default:
                 $simulatedResponse = $this->loadMockResponse('mock_example_com.txt');
                 break;

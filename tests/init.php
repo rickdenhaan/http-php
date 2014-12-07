@@ -11,12 +11,12 @@ date_default_timezone_set('Europe/Amsterdam');
 // handle autoloading
 spl_autoload_register(
     function ($className) {
-        if ($className === 'MockRequest') {
-            require_once(dirname(__FILE__) . '/Capirussa/Http/mock/MockRequest.php');
+        if ($className === 'MockHttpRequest') {
+            require_once(dirname(__FILE__) . '/Capirussa/Http/mock/MockHttpRequest.php');
         } else if (preg_match('/^Capirussa\\\\Http/', $className)) {
-            $filePath = str_replace('\\', DIRECTORY_SEPARATOR, $className) . '.php';
+            $filePath = dirname(__FILE__) . '/../' . str_replace('\\', DIRECTORY_SEPARATOR, $className) . '.php';
             if (file_exists($filePath)) {
-                require_once(dirname(__FILE__) . '/../' . $filePath);
+                require_once($filePath);
             }
         }
     }

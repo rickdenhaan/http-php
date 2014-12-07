@@ -7,7 +7,7 @@ use Capirussa\Http\Request;
  * Tests Capirussa\Http\Request
  *
  */
-class RequestTest extends PHPUnit_Framework_TestCase
+class HttpRequestTest extends PHPUnit_Framework_TestCase
 {
     public function testConstructWithoutParameters()
     {
@@ -531,7 +531,7 @@ class RequestTest extends PHPUnit_Framework_TestCase
 
     public function testSend()
     {
-        $request = new MockRequest('http://www.example.com');
+        $request = new MockHttpRequest('http://www.example.com');
 
         $response = $request->send();
 
@@ -545,7 +545,7 @@ class RequestTest extends PHPUnit_Framework_TestCase
 
     public function testGetLastResponse()
     {
-        $request = new MockRequest('http://www.example.com');
+        $request = new MockHttpRequest('http://www.example.com');
 
         $this->assertNull($request->getLastResponse());
 
